@@ -56,9 +56,9 @@ class LockRequestManager
         $request->setUser($user)
             ->setType(LockRequest::TYPE_PERM_OPEN)
             ->updateStatus(LockRequest::STATUS_PENDING)
-            ->setData([
+            ->setData(json_encode([
                 "time" => $maxTime
-            ]);
+            ]));
 
         $this->entityManager->persist($request);
         $this->entityManager->flush();
