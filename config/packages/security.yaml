@@ -1,22 +1,49 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        users:
+            entity:
+                class: 'App\Entity\User'
+    encoders:
+        App\Entity\User:
+            algorithm: 'auto'
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            anonymous: true
-
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
+        mobile-api:
+            pattern: ^/mobile-api/.*
+            stateless: true
+            access_denied_handler: 'App\Security\MobileAPIAccessDeniedHandler'
+            guard:
+                authenticators:
+                    - App\Security\MobileAPIAuthenticator
+        lock-api:
+            pattern: ^/lock-api/.*
+            stateless: true
+            access_denied_handler: 'App\Security\LockAPIAccessDeniedHandler'
+            guard:
+                authenticators:
+                    - App\Security\LockAPIAuthenticator
+        main-website:
+            pattern: ^/.*
+            anonymous: ~
+            access_denied_handler: 'App\Security\MainWebsiteAccessDeniedHandler'
+            guard:
+                authenticators:
+                    - App\Security\MainWebsiteAuthenticator
+            logout:
+                path: auth_logout
+                success_handler:
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - {path: ^/mobile-api/.*, roles: ROLE_USER}
+        - {path: ^/auth/.*, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+

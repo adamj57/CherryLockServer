@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CherryLock - Choose your path...{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href={{ asset('css/auth/dialog.css') }}/>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row mt-3">
+            <div class="col-6 offset-3">
+                <img class="w-100" src="{{ asset('img/logo.png') }}" alt="logo"/>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-sm-12 col-md-6">
+                <div class="row justify-content-center align-content-center">
+                    <div class="card text-center w-75">
+                        <div class="card-body">
+                            <h4 class="card-title">Zaloguj się!</h4>
+                            <p class="card-text">Opcja dla obecnych posiadaczy konta w usłudze.</p>
+                            <a class="btn btn-outline-primary btn-lg" href="{{ path('auth_login') }}">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 mt-1 mt-md-0">
+                <div class="row justify-content-center align-content-center">
+                    <div class="card text-center w-75">
+                        <div class="card-body">
+                            <h4 class="card-title">Zarejestruj się!</h4>
+                            <p class="card-text">Jeśli nie masz jeszcze konta w usłudze - zarejestruj się teraz!</p>
+                            <a class="btn btn-outline-primary btn-lg" href="{{ path('auth_register') }}">Rejestracja</a>
+                            <p class="card-text text-secondary small">(potrzebny kod zaproszenia)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

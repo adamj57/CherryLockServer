@@ -47,4 +47,14 @@ class SchoolClassTypeRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findOneByName($value): ?SchoolClassType
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.name = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }

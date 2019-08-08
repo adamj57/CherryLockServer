@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,23 +23,24 @@ class SchoolClass
     private $shortname;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\SchoolClassType", mappedBy="SchoolClasses")
-     */
-    private $type;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $year;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="schoolClass")
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="schoolClass")
      */
     private $users;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\SchoolClassType", inversedBy="schoolClasses")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $schoolClassType;
+
     public function __construct()
     {
-        $this->type = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -60,37 +60,6 @@ class SchoolClass
         return $this;
     }
 
-    /**
-     * @return Collection|SchoolClassType[]
-     */
-    public function getType(): Collection
-    {
-        return $this->type;
-    }
-
-    public function addType(SchoolClassType $type): self
-    {
-        if (!$this->type->contains($type)) {
-            $this->type[] = $type;
-            $type->setSchoolClasses($this);
-        }
-
-        return $this;
-    }
-
-    public function removeType(SchoolClassType $type): self
-    {
-        if ($this->type->contains($type)) {
-            $this->type->removeElement($type);
-            // set the owning side to null (unless already changed)
-            if ($type->getSchoolClasses() === $this) {
-                $type->setSchoolClasses(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getYear(): ?int
     {
         return $this->year;
@@ -103,15 +72,55 @@ class SchoolClass
         return $this;
     }
 
-    public function getUsers(): ?User
+    public function getUsers()
     {
         return $this->users;
     }
 
-    public function setUsers(?User $users): self
+    public function setUsers($users): self
     {
         $this->users = $users;
 
         return $this;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setSchoolClass($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getSchoolClass() === $this) {
+                $user->setSchoolClass(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSchoolClassType(): ?SchoolClassType
+    {
+        return $this->schoolClassType;
+    }
+
+    public function setSchoolClassType(?SchoolClassType $schoolClassType): self
+    {
+        $this->schoolClassType = $schoolClassType;
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return strval($this->year).$this->shortname;
     }
 }

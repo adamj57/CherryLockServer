@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+
+{% block title %}CherryLock - Rejestracja{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/auth/register.css') }}"/>
+{% endblock %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-12 col-md-6 offset-md-3 align-self-center">
+                <div class="row mb-5">
+                    <div class="col-6 offset-3">
+                        <img class="w-100" src="{{ asset('img/logo.png') }}" alt="logo"/>
+                    </div>
+                </div>
+                <h1 class="h2 mb-3 font-weight-normal">
+                    Zarejestruj się
+                </h1>
+                {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_widget(form.name, {'attr': {'placeholder': "Imię"}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(form.surname, {'attr': {'placeholder': "Nazwisko"}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(form.schoolClass) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(form.email, {'attr': {'placeholder': "E-mail"}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(form.username, {'attr': {'placeholder': "Login"}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(form.plainPassword, {'attr': {'placeholder': "Hasło"}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(form.inviteCode, {'attr': {'placeholder': "Kod zaproszenia"}}) }}
+                </div>
+                {{ form_widget(form.save, {'attr': {'class': "btn btn-primary btn-block"}}) }}
+                {{ form_end(form) }}
+                <a class="small" href="{{ path('auth_dialog') }}">&lt Wróć</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

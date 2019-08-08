@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,9 +24,14 @@ class SchoolClassType
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\SchoolClass", inversedBy="type")
+     * @ORM\OneToMany(targetEntity="App\Entity\SchoolClass", mappedBy="schoolClassType")
      */
     private $schoolClasses;
+
+    public function __construct()
+    {
+        $this->schoolClasses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -43,14 +50,33 @@ class SchoolClassType
         return $this;
     }
 
-    public function getSchoolClasses(): ?SchoolClass
+    /**
+     * @return Collection|SchoolClass[]
+     */
+    public function getSchoolClasses(): Collection
     {
         return $this->schoolClasses;
     }
 
-    public function setSchoolClasses(?SchoolClass $schoolClasses): self
+    public function addSchoolClass(SchoolClass $schoolClass): self
     {
-        $this->schoolClasses = $schoolClasses;
+        if (!$this->schoolClasses->contains($schoolClass)) {
+            $this->schoolClasses[] = $schoolClass;
+            $schoolClass->setSchoolClassType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSchoolClass(SchoolClass $schoolClass): self
+    {
+        if ($this->schoolClasses->contains($schoolClass)) {
+            $this->schoolClasses->removeElement($schoolClass);
+            // set the owning side to null (unless already changed)
+            if ($schoolClass->getSchoolClassType() === $this) {
+                $schoolClass->setSchoolClassType(null);
+            }
+        }
 
         return $this;
     }

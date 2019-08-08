@@ -2,9 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\DeviceToken;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,7 +15,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository
+class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
     public function __construct(RegistryInterface $registry)
     {
@@ -47,4 +50,46 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findOneByUsername($value): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.username = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
+    public function findOneByDeviceToken($token): ?User
+    {
+        $deviceToken = $this->getEntityManager()
+                            ->getRepository(DeviceToken::class)
+                            ->findOneByToken($token);
+
+        if ($deviceToken == null) {
+            return null;
+        }
+
+        return $deviceToken->getUser();
+    }
+
+    /**
+     * Loads the user for the given username.
+     *
+     * This method must return null if the user is not found.
+     *
+     * @param string $username The username
+     *
+     * @return UserInterface|null
+     */
+    public function loadUserByUsername($usernameOrEmail)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.username = :val or u.email = :val')
+            ->setParameter('val', $usernameOrEmail)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }
