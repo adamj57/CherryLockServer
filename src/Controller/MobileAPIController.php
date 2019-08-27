@@ -190,12 +190,11 @@ class MobileAPIController extends AbstractController
     /**
      * @Route("/status/{id}", name="get_status", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
-     * @param UserInterface $user
      * @param EntityManagerInterface $em
+     * @param int $id
      * @return JsonResponse
      */
     public function getStatus(
-        UserInterface $user,
         EntityManagerInterface $em,
         int $id
     )
@@ -222,6 +221,30 @@ class MobileAPIController extends AbstractController
         ];
 
         return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/user", name="get_user_data" , methods={"GET"})
+     * @Security("is_granted('ROLE_USER')")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getUserData(
+        Request $request
+    )
+    {
+        /**
+         * @var User $user
+         */
+        $user = $request->getUser();
+
+        return new JsonResponse([
+            "id" => $user->getId(),
+            "role" => $user->getRoles(),
+            "openings" => $user->getTimesOpened(),
+            "name" => $user->getName(),
+            "surname" => $user->getSurname(),
+        ], Response::HTTP_OK);
     }
 
     /**
